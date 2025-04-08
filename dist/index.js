@@ -29660,25 +29660,26 @@ module.exports = {
 const core    = __nccwpck_require__( 2186 );
 const toolkit = __nccwpck_require__( 6338 );
 
-const AUTO_CREATE_NEW_BRANCH = toolkit.input.tobool( core.getInput( 'AUTO_CREATE_NEW_BRANCH' ) );
-const COMMIT_EACH_FILE       = toolkit.input.tobool( core.getInput( 'COMMIT_EACH_FILE' ) );
-const DRY_RUN                = toolkit.input.tobool( core.getInput( 'DRY_RUN' ) );
-const PULL_REQUEST           = toolkit.input.tobool( core.getInput( 'PULL_REQUEST' ) );
-const PULL_REQUEST_LABELS    = core.getInput( 'PULL_REQUEST_LABELS' );
-const SKIP_CI                = toolkit.input.tobool( core.getInput( 'SKIP_CI' ) );
-const GITHUB_TOKEN           = core.getInput( 'GITHUB_TOKEN' );
-const GIT_URL                = core.getInput( 'GIT_URL' );
-const GIT_USER               = core.getInput( 'GIT_USER' );
-const GIT_EMAIL              = core.getInput( 'GIT_EMAIL' );
-const RAW_REPOSITORIES       = core.getInput( 'REPOSITORIES' );
-const COMMIT_MESSAGE         = core.getInput( 'COMMIT_MESSAGE' );
-const RAW_WORKFLOW_FILES     = core.getInput( 'WORKFLOW_FILES' );
-const RETRY_MODE             = core.getInput( 'RETRY_MODE' );
-const WORKFLOW_FILES_DIR     = core.getInput( 'WORKFLOW_FILES_DIR' );
-const REPOSITORIES           = RAW_REPOSITORIES.split( '\n' );
-const WORKFLOW_FILES         = RAW_WORKFLOW_FILES.split( '\n' );
-const GITHUB_WORKSPACE       = toolkit.input.env( 'GITHUB_WORKSPACE' );
-const WORKSPACE              = toolkit.path.dirname( toolkit.path.dirname( GITHUB_WORKSPACE ) ) + '/workflow-sync/';
+const AUTO_CREATE_NEW_BRANCH     = toolkit.input.tobool( core.getInput( 'AUTO_CREATE_NEW_BRANCH' ) );
+const COMMIT_EACH_FILE           = toolkit.input.tobool( core.getInput( 'COMMIT_EACH_FILE' ) );
+const DRY_RUN                    = toolkit.input.tobool( core.getInput( 'DRY_RUN' ) );
+const PULL_REQUEST               = toolkit.input.tobool( core.getInput( 'PULL_REQUEST' ) );
+const PULL_REQUEST_LABELS        = core.getInput( 'PULL_REQUEST_LABELS' );
+const SKIP_CI                    = toolkit.input.tobool( core.getInput( 'SKIP_CI' ) );
+const GITHUB_TOKEN               = core.getInput( 'GITHUB_TOKEN' );
+const GIT_URL                    = core.getInput( 'GIT_URL' );
+const GIT_USER                   = core.getInput( 'GIT_USER' );
+const GIT_EMAIL                  = core.getInput( 'GIT_EMAIL' );
+const RAW_REPOSITORIES           = core.getInput( 'REPOSITORIES' );
+const COMMIT_MESSAGE             = core.getInput( 'COMMIT_MESSAGE' );
+const COMMIT_MESSAGE_AS_PR_TITLE = toolkit.input.tobool( core.getInput( 'COMMIT_MESSAGE_AS_PR_TITLE' ) );
+const RAW_WORKFLOW_FILES         = core.getInput( 'WORKFLOW_FILES' );
+const RETRY_MODE                 = core.getInput( 'RETRY_MODE' );
+const WORKFLOW_FILES_DIR         = core.getInput( 'WORKFLOW_FILES_DIR' );
+const REPOSITORIES               = RAW_REPOSITORIES.split( '\n' );
+const WORKFLOW_FILES             = RAW_WORKFLOW_FILES.split( '\n' );
+const GITHUB_WORKSPACE           = toolkit.input.env( 'GITHUB_WORKSPACE' );
+const WORKSPACE                  = toolkit.path.dirname( toolkit.path.dirname( GITHUB_WORKSPACE ) ) + '/workflow-sync/';
 
 module.exports = {
 	GIT_USER,
@@ -29699,6 +29700,7 @@ module.exports = {
 	GITHUB_WORKSPACE,
 	SKIP_CI,
 	COMMIT_MESSAGE,
+	COMMIT_MESSAGE_AS_PR_TITLE,
 	RETRY_MODE
 };
 
@@ -32986,20 +32988,21 @@ const helper     = __nccwpck_require__( 6989 );
 
 
 async function run() {
-	let AUTO_CREATE_NEW_BRANCH = (__nccwpck_require__(3424).AUTO_CREATE_NEW_BRANCH);
-	let COMMIT_EACH_FILE       = (__nccwpck_require__(3424).COMMIT_EACH_FILE);
-	let DRY_RUN                = (__nccwpck_require__(3424).DRY_RUN);
-	let GITHUB_TOKEN           = (__nccwpck_require__(3424).GITHUB_TOKEN);
-	let GIT_URL                = (__nccwpck_require__(3424).GIT_URL);
-	let WORKFLOW_FILES_DIR     = (__nccwpck_require__(3424).WORKFLOW_FILES_DIR);
-	let WORKSPACE              = (__nccwpck_require__(3424).WORKSPACE);
-	let REPOSITORIES           = (__nccwpck_require__(3424).REPOSITORIES);
-	let WORKFLOW_FILES         = (__nccwpck_require__(3424).WORKFLOW_FILES);
-	let PULL_REQUEST           = (__nccwpck_require__(3424).PULL_REQUEST);
-	let PULL_REQUEST_LABELS     = (__nccwpck_require__(3424).PULL_REQUEST_LABELS);
-	let SKIP_CI                = (__nccwpck_require__(3424).SKIP_CI);
-	let COMMIT_MESSAGE         = (__nccwpck_require__(3424).COMMIT_MESSAGE);
-	let RETRY_MODE             = (__nccwpck_require__(3424).RETRY_MODE);
+	let AUTO_CREATE_NEW_BRANCH     = (__nccwpck_require__(3424).AUTO_CREATE_NEW_BRANCH);
+	let COMMIT_EACH_FILE           = (__nccwpck_require__(3424).COMMIT_EACH_FILE);
+	let DRY_RUN                    = (__nccwpck_require__(3424).DRY_RUN);
+	let GITHUB_TOKEN               = (__nccwpck_require__(3424).GITHUB_TOKEN);
+	let GIT_URL                    = (__nccwpck_require__(3424).GIT_URL);
+	let WORKFLOW_FILES_DIR         = (__nccwpck_require__(3424).WORKFLOW_FILES_DIR);
+	let WORKSPACE                  = (__nccwpck_require__(3424).WORKSPACE);
+	let REPOSITORIES               = (__nccwpck_require__(3424).REPOSITORIES);
+	let WORKFLOW_FILES             = (__nccwpck_require__(3424).WORKFLOW_FILES);
+	let PULL_REQUEST               = (__nccwpck_require__(3424).PULL_REQUEST);
+	let PULL_REQUEST_LABELS        = (__nccwpck_require__(3424).PULL_REQUEST_LABELS);
+	let SKIP_CI                    = (__nccwpck_require__(3424).SKIP_CI);
+	let COMMIT_MESSAGE             = (__nccwpck_require__(3424).COMMIT_MESSAGE);
+	let COMMIT_MESSAGE_AS_PR_TITLE = (__nccwpck_require__(3424).COMMIT_MESSAGE_AS_PR_TITLE);
+	let RETRY_MODE                 = (__nccwpck_require__(3424).RETRY_MODE);
 
 	toolkit.log( '-------------------------------------------------------' );
 	toolkit.log( '⚙️ Basic Config' );
@@ -33172,7 +33175,7 @@ async function run() {
 							// create the pull request
 							const pull_request_resp = await finalOctokit.request(`POST /repos/${owner}/${repository}/pulls`, {
 								owner: owner, repo: repository,
-								title: `Files Sync From ${toolkit.input.env( 'GITHUB_REPOSITORY' )}`,
+								title: ( COMMIT_MESSAGE_AS_PR_TITLE ) ? COMMIT_MESSAGE : `Files Sync From ${toolkit.input.env( 'GITHUB_REPOSITORY' )}`,
 								head: pull_request_branch,
 								base: current_branch
 							}).catch((error) => {
